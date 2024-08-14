@@ -12,7 +12,7 @@ function LuckyDraw() {
     const fetchUsers = async () => {
       try {
         const response = await axios.get('http://localhost:5000/api/entries');
-        setNames(response.data.map(user => user.namex)); // Adjust if the user object structure is different
+        setNames(response.data.map(user => user.name)); // Adjust if the user object structure is different
       } catch (error) {
         console.error('Error fetching users:', error);
       }

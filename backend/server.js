@@ -26,6 +26,12 @@ const entrySchema = new mongoose.Schema({
 });
 const Entry = mongoose.model('Entry', entrySchema);
 
+const adminSchema = new mongoose.Schema({
+    userName: String,
+    password: String
+})
+const Admin = mongoose.model("Admin", adminSchema)
+
 // Routes
 app.get('/api/entries', async (req, res) => {
     try {
@@ -91,6 +97,35 @@ app.get('/api/users', async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 });
+
+app.post('/api/admin-login', async (req, res) => {
+    const {userName, password} = req.body;
+    try{
+        const admin = await Admin.findOne({userName: userName, password: password}).exec();
+        if(admin != null){
+            res.status(200).json("Valid credentials");
+        }else{
+            res.status(201).json("Invalid Credentials");
+        }
+    }catch(error){
+        res.status(500).json("Something went wrong" + error);
+        console.log(error);
+    }
+})
+
+app.post("/api/clear-pool", async (req, res) => {
+    try {
+        const status = await Entry.deleteMany({}).exec();
+        console.log(status);
+        if(status){
+            res.status(200).json("Deleted all entries");
+        }else{
+            res.status(201).json("Something wrong");
+        }
+    } catch (error) {
+        res.status(500).json("Server error" + error);
+    }
+})
 
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
